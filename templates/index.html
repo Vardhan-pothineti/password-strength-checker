@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Password Strength Checker</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <button onclick="checkPassword()">Check Strength</button>
+    
+    <p id="result"></p>
+
+    <script>
+        function checkPassword() {
+            let password = document.getElementById("password").value;
+            let resultElement = document.getElementById("result");
+    
+            fetch("http://127.0.0.1:5000/check_password", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ password: password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultElement.innerText = "Strength: " + data.strength;
+                resultElement.style.color = (data.strength === "Strong") ? "green" : 
+                                            (data.strength === "Medium") ? "orange" : "red";
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                resultElement.innerText = "Error checking password strength!";
+                resultElement.style.color = "red";
+            });
+        }
+    </script>
+    
